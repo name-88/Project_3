@@ -1,3 +1,4 @@
+from cProfile import label
 from tkinter import *
 from PIL import Image, ImageTk
 import requests
@@ -16,51 +17,52 @@ def load_image(url):
         print(f"Произошла ошибка: {e}")
         return None
 
+
 def open_new_window():
+    tag = tag_entry.get()
+    url_with_tag = f'https://cataas.com/cat/{tag}' if tag else 'https://cataas.com/cat'
+    img = load_image(url_with_tag)
+
     img = load_image(url)
-
     if img:
+        # Создаем новое вторичное окно
         new_window = Toplevel()
-        new_window.title("Фото кота")
+        new_window.title("Картинка с котиком")
         new_window.geometry("600x480")
+
+        # Добавляем изображение в новое окно
         label = Label(new_window, image=img)
+        label.image = img  # Сохраняем ссылку на изображение
         label.pack()
-        label.image=img
-
-        label.config(image=img)
-        label.image = img
 
 
-def exit():
+def exit_app():
     window.destroy()
 
-
 window = Tk()
-window.title("Cats")
+window.title("Cats!")
 window.geometry("600x520")
-
-()
-
-# update_button = Button(text="Обновить", command=set_image)
-# update_button.pack()
-
+# Создаем меню
 menu_bar = Menu(window)
 window.config(menu=menu_bar)
 
+# Добавляем пункты меню
 file_menu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Файл", menu=file_menu)
 file_menu.add_command(label="Загрузить фото", command=open_new_window)
 file_menu.add_separator()
-file_menu.add_command(label="Выход", command=exit)
+file_menu.add_command(label="Выход", command=exit_app)
+
+# Поле ввода для тегов
+tag_entry = Entry()
+tag_entry.pack()
+
+# Кнопка для загрузки изображения с тегом
+load_button = Button(text="Загрузить по тегу", command=open_new_window)
+load_button.pack()
 
 
-url = "http://cataas.com/cat"
-img = load_image(url)
-
-if img:
-    label.config(image=img)
-    label.image = img
-
-set_image()
+url = 'https://cataas.com/cat'
 
 window.mainloop()
+
